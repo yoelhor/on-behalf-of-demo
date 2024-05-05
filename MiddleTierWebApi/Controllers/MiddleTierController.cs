@@ -27,12 +27,11 @@ public class MiddleTierController : ControllerBase
     public async Task<string> GetAsync()
     {
 
-        string MiddleTierApiAccessToken = string.Empty;
-
         // Read app settings
         string baseUrl = _configuration.GetSection("DownstreamWebApi:BaseUrl").Value!;
         string[] scopes = _configuration.GetSection("DownstreamWebApi:Scopes").Get<string[]>();
         string endpoint = _configuration.GetSection("DownstreamWebApi:Endpoint").Value!;
+        string DownstreamApiAccessToken = string.Empty;
 
         // Set the scope full URI
         for (int i = 0; i < scopes.Length; i++)
@@ -43,7 +42,7 @@ public class MiddleTierController : ControllerBase
         try
         {
             // Get an access token to call the MiddleTier Web API (the first API in line)
-            MiddleTierApiAccessToken = await _authorizationHeaderProvider.CreateAuthorizationHeaderForUserAsync(scopes);
+            DownstreamApiAccessToken = await _authorizationHeaderProvider.CreateAuthorizationHeaderForUserAsync(scopes);
         }
         catch (MicrosoftIdentityWebChallengeUserException ex)
         {
@@ -65,7 +64,7 @@ public class MiddleTierController : ControllerBase
         {
             // Use the access token to call the Account API.
             HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Add("Authorization", MiddleTierApiAccessToken);
+            client.DefaultRequestHeaders.Add("Authorization", DownstreamApiAccessToken);
             return "Result from middle-tier API : calling downstream API... " + await client.GetStringAsync(endpoint);
 
         }
