@@ -18,7 +18,7 @@ public class DownstreamController : ControllerBase
     [HttpGet()]
     [Authorize]
     [RequiredScopeOrAppPermission(
-           AcceptedScope = new[] { "Account.Payment" })]
+           AcceptedScope = new[] { "Payment.Read" })]
     public async Task<string> GetAsync()
     {
         return "Result from Downstream Web API " + DateTime.Now.ToString();
